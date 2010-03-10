@@ -1,5 +1,4 @@
 from mingus.containers import Note
-from mingus.core import scales, chords
 
 from tuning import Tuning, Standard
 
@@ -27,7 +26,7 @@ class Guitar:
 
             self.show_string(scope, string)
 
-    def show_scale(self, scale, scope=None):
+    def show_notes(self, notes, scope=None):
         if scope is None:
             scope = range(0, self.frets + 1)
 
@@ -39,23 +38,7 @@ class Guitar:
             else:
                 first = False
 
-            self.show_string(scope, string, scale)
-
-    def show_chord(self, chord, scope=None):
-        if scope is None:
-            scope = range(0, self.frets + 1)
-
-        self.show_ruler(scope)
-        first = True
-        for string in self.tuning:
-            if not first:
-                self.show_filler(scope)
-            else:
-                first = False
-
-            self.show_string(scope, string, chord)
-
-
+            self.show_string(scope, string, notes)
 
     def show_ruler(self, scope):
         ruler = ''
@@ -71,10 +54,10 @@ class Guitar:
 
         print ruler
 
-    def show_string(self, scope, string, scale=None):
+    def show_string(self, scope, string, notes=None):
         filler = '|'
         for n in scope:
-            d = scale and self.in_scale(scale, string, n)
+            d = notes and self.in_scale(notes, string, n)
             if d:
                 c = self.format_note(d)
             else:
@@ -118,21 +101,11 @@ class Guitar:
 
         print filler
 
-    def in_scale(self, scale, string, n):
-        inote = int(string) + n
-        note = Note().from_int(inote)
+    def in_scale(self, notes, string, n):
+        note = int(string) + n
 
-        if note.name in scale:
-            return scale.index(note.name) + 1
-        else:
-            return 0
+        for i,val in enumerate(notes):
+            if note % 12 == int(Note(val)) % 12:
+                return i + 1
+        return 0
 
-if __name__ == '__main__':
-    g = Guitar()
-    scope = range(0, 13)
-    #g.show(scope)
-    g.show_scale(scales.diatonic('C'), scope)
-
-    print
-    scope = range(0, 13)
-    g.show_chord(chords.from_shorthand('Am'), scope)
