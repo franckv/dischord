@@ -12,11 +12,12 @@ if __name__ == '__main__':
     parser.add_option('-m', '--mode', dest='mode', default='major', help='mode of the scale: major (default), harmonic_minor, ionian, ...')
     parser.add_option('-c', '--chord', dest='chord', help='name of the chord to play')
     parser.add_option('-r', '--range', dest='range', help='range of the frets to display')
+    parser.add_option('-f', '--frets', dest='frets', type='int', default=12, help='number of frets on the neck')
 
 
     (options, args) = parser.parse_args()
 
-    g = Guitar()
+    g = Guitar(frets=options.frets)
 
     if options.range:
         try:
