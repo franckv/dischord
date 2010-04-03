@@ -1,6 +1,6 @@
-Display scales and chords positions on a guitar neck:
-* support any tuning, any number of frets and any number of strings
-* support coloring tonics and other specific degrees
+Displays scales and chords positions on a guitar neck:
+* supports any tuning, any number of frets and any number of strings
+* supports coloring tonics and other specific degrees
 * all the frets or any subset can be displayed at once.
 
 Examples:
