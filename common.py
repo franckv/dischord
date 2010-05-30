@@ -1,0 +1,2 @@
+PROGNAME = 'Dischord'
+PROGVERSION = '0.1'
