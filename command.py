@@ -2,7 +2,6 @@ import os, os.path
 
 from mingus.core import scales, chords
 
-import config
 from guitar import Guitar
 
 def do_scale(options, scale):
@@ -34,15 +33,17 @@ def do_scale(options, scale):
     elif options.mode == 'locrian':
         notes = scales.locrian(scale)
 
-    g.show_notes(notes, scope)
+    lines = g.get_notes(notes, scope)
+    for line in lines:
+        print line
 
 def do_chord(options, chord):
     g = Guitar(frets=options.frets)
     scope = get_scope(options, g)
 
-    notes = chords.from_shorthand(chord)
-
-    g.show_notes(notes, scope)
+    lines = g.get_chord(chord, scope)
+    for line in lines:
+        print line
 
 def get_scope(options, g):
     if options.range:
