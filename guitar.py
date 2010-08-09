@@ -1,3 +1,4 @@
+from mingus.core import scales, chords
 from mingus.containers import Note
 
 from tuning import Tuning, Standard
@@ -11,36 +12,32 @@ class Guitar:
 
         self.frets = frets
 
+    def get_notes(self, notes, scope=None):
+        lines = []
 
-    def show(self, scope=None):
         if scope is None:
             scope = range(0, self.frets + 1)
 
-        self.show_ruler(scope)
+        lines.append(self.get_ruler(scope))
         first = True
         for string in self.tuning:
             if not first:
-                self.show_filler(scope)
+                lines.append(self.get_filler(scope))
             else:
                 first = False
 
-            self.show_string(scope, string)
+            lines.append(self.get_string(scope, string, notes))
 
-    def show_notes(self, notes, scope=None):
-        if scope is None:
-            scope = range(0, self.frets + 1)
+        return lines
 
-        self.show_ruler(scope)
-        first = True
-        for string in self.tuning:
-            if not first:
-                self.show_filler(scope)
-            else:
-                first = False
+    def get_scale(self, scale, mode = 'major', scope):
 
-            self.show_string(scope, string, notes)
+    def get_chord(self, chord, scope):
+        notes = chords.from_shorthand(chord)
 
-    def show_ruler(self, scope):
+        return self.get_notes(notes, scope)
+
+    def get_ruler(self, scope):
         ruler = ''
         for n in scope:
             ruler += ' '
@@ -52,9 +49,9 @@ class Guitar:
                 else:
                     ruler += ' %i' % n
 
-        print ruler
+        return ruler
 
-    def show_string(self, scope, string, notes=None):
+    def get_string(self, scope, string, notes=None):
         filler = '|'
         for n in scope:
             d = notes and self.in_scale(notes, string, n)
@@ -68,7 +65,7 @@ class Guitar:
                 filler += '-%s-' % c
             filler += '|'
 
-        print filler
+        return filler
 
     def format_note(self, d):
         red = '\033[01;31m'
@@ -90,7 +87,7 @@ class Guitar:
             color = gray
         return color + '%i' % d + endc
 
-    def show_filler(self, scope):
+    def get_filler(self, scope):
         filler = '|'
         for n in scope:
             if n == 0:
@@ -99,7 +96,7 @@ class Guitar:
                 filler += '   '
             filler += '|'
 
-        print filler
+        return filler
 
     def in_scale(self, notes, string, n):
         note = int(string) + n
