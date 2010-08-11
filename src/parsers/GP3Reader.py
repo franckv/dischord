@@ -1,33 +1,7 @@
 from model import Song, Channel, Measure, Track, MeasureTrack, Beat, Note
-from filereader import FileReader
+from GPReader import GPReader
 
-class GP3Reader(FileReader):
-    def parseSong(self):
-        song = Song()
-
-        self.parseProperties(song)
-        self.parseChannels(song)
-
-        nmeasures = self.readSignedInt()
-        ntracks = self.readSignedInt()
-
-        for i in range(nmeasures):
-            measure = self.parseMeasure()
-            measure.pos = i
-            song.measures.append(measure)
-        for j in range(ntracks):
-            track = self.parseTrack()
-            song.tracks.append(track)
-        for i in range(nmeasures):
-            measure = song.measures[i]
-            for j in range(ntracks):
-                track = song.tracks[j]
-                measuretrack = self.parseMeasureTrack(measure, track)
-                measure.tracks.append(measuretrack)
-                track.measures.append(measuretrack)
-
-        return song
-
+class GP3Reader(GPReader):
     def parseProperties(self, song):
         song.version = self.getPaddedString(30)
         song.title = self.getPaddedString()
@@ -256,15 +230,15 @@ class GP3Reader(FileReader):
         flags = self.readByte()
 
         if flags & 1:
-            note.bend = self.readBend()
+            note.bend = self.parseBend()
         if flags & 4:
             note.slide = True
         if flags & 2:
             note.hammer = True
         if flags & 16:
-            note.grace = self.readGrace()
+            note.grace = self.parseGrace()
 
-    def readBend(self):
+    def parseBend(self):
         type = self.readByte()
         weight = self.readSignedInt()
         npoints = self.readSignedInt()
@@ -274,7 +248,7 @@ class GP3Reader(FileReader):
             vertpos = self.readSignedInt()
             vibrato = self.readByte()
 
-    def readGrace(self):
+    def parseGrace(self):
         fret = self.readByte()
         dynamic = self.readByte()
         transition = self.readByte()
