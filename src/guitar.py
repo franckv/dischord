@@ -30,7 +30,8 @@ class Guitar:
 
         return lines
 
-    def get_scale(self, scale, mode = 'major', scope):
+    def get_scale(self, scale, mode = 'major', scope=None):
+        pass
 
     def get_chord(self, chord, scope):
         notes = chords.from_shorthand(chord)
