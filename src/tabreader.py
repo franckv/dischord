@@ -8,8 +8,8 @@ class GP3Reader(FileReader):
         self.parseProperties(song)
         self.parseChannels(song)
 
-        nmeasures = self.readInt()
-        ntracks = self.readInt()
+        nmeasures = self.readSignedInt()
+        ntracks = self.readSignedInt()
 
         for i in range(nmeasures):
             measure = self.parseMeasure()
@@ -40,18 +40,18 @@ class GP3Reader(FileReader):
         song.instructions = self.getPaddedString()
 
         song.comment = ''
-        nlines = self.readInt()
+        nlines = self.readSignedInt()
         for i in range(nlines):
             song.comment += self.getPaddedString()
 
         song.tripletfeel = self.readBool()
-        song.tempo = self.readInt()
-        song.key = self.readInt()
+        song.tempo = self.readSignedInt()
+        song.key = self.readSignedInt()
 
     def parseChannels(self, song):
         for port in range(4):
             for channelno in range(16):
-                instrument = self.readInt()
+                instrument = self.readSignedInt()
                 channel = Channel(instrument)
                 channel.port = port
                 channel.number = channelno
@@ -103,24 +103,24 @@ class GP3Reader(FileReader):
     def parseTrack(self):
         flags = self.readByte()
         trackname = self.getPaddedString(40)
-        nstrings = self.readInt()
+        nstrings = self.readSignedInt()
         track = Track(trackname, nstrings)
 
         for j in range(7):
-            tuning = self.readInt()
+            tuning = self.readSignedInt()
             track.tuning.append(tuning)
-        track.port = self.readInt()
-        track.channel = self.readInt() - 1
-        track.effectChannel = self.readInt() - 1
-        track.frets = self.readInt()
-        track.capo = self.readInt()
+        track.port = self.readSignedInt()
+        track.channel = self.readSignedInt() - 1
+        track.effectChannel = self.readSignedInt() - 1
+        track.frets = self.readSignedInt()
+        track.capo = self.readSignedInt()
         track.color = self.readColor()
 
         return track
 
     def parseMeasureTrack(self, measure, track):
         measuretrack = MeasureTrack(measure, track)
-        nbeats = self.readInt()
+        nbeats = self.readSignedInt()
         for i in range(nbeats):
             beat = self.parseBeat()
             measuretrack.beats.append(beat)
@@ -142,10 +142,18 @@ class GP3Reader(FileReader):
             beat.dotted = True
 
         if flags & 32:
-            beat.nuplet = self.readInt()
+            beat.nuplet = self.readSignedInt()
 
         if flags & 2:
-            self.parseChord()
+            header = self.readByte()
+            if header & 1:
+                raise Exception('Not implemented')
+            else:
+                chordname = self.getPaddedString()
+                firstfret = self.readInt()
+                if (firstfret != 0):
+                    for i in range(6):
+                        fret = self.readInt()
 
         if flags & 4:
             self.text = self.getPaddedString()
@@ -157,10 +165,11 @@ class GP3Reader(FileReader):
             self.parseMixChange()
         
         stringmap = self.readByte()
-        for string in range(7):
+        for string in reversed(range(7)):
             if stringmap & (1 << string):
                 note = self.parseNote()
-                note.string = string
+                note.string = 7 - string
+                note.map = stringmap
                 beat.notes.append(note)
 
         return beat
@@ -175,9 +184,45 @@ class GP3Reader(FileReader):
         if flags & 16:
             beat.FadeIn = True
         if flags & 32:
-            raise Exception('not implemented')
+            type = self.readByte()
+            if type == 0:
+                beat.Tremolo = self.readInt()
+            elif type == 1:
+                beat.Tapping = True
+                self.skip(4)
+            elif type == 2:
+                beat.Slapping = True
+                self.skip(4)
+            elif type == 3:
+                beat.Popping = True
+                self.skip(4)
         if flags & 64:
-            raise Exception('not implemented')
+            raise Exception('Not implemented')
+
+    def parseMixChange(self):
+        instrument = self.readSignedByte()
+        volume = self.readSignedByte()
+        pan = self.readSignedByte()
+        chorus = self.readSignedByte()
+        reverb = self.readSignedByte()
+        phaser = self.readSignedByte()
+        tremolo = self.readSignedByte()
+        tempo = self.readSignedInt()
+        
+        if volume >= 0:
+            volumeduration = self.readByte()
+        if pan >= 0:
+            panduration = self.readByte()
+        if chorus >= 0:
+            chorusduration = self.readByte()
+        if reverb >= 0:
+            reverbduration = self.readByte()
+        if phaser >= 0:
+            phaserduration = self.readByte()
+        if tremolo >= 0:
+            tremoloduration = self.readByte()
+        if tempo >= 0:
+            tempoduration = self.readByte()
 
     def parseNote(self):
         note = Note()
@@ -189,7 +234,6 @@ class GP3Reader(FileReader):
         if flags & 1:
             note.duration = self.readByte()
             note.nuplet = self.readByte()
-            raise Exception('not implemented')
 
         if flags & 16:
             note.dynamic = self.readByte()
@@ -222,12 +266,12 @@ class GP3Reader(FileReader):
 
     def readBend(self):
         type = self.readByte()
-        weight = self.readInt()
-        npoints = self.readInt()
+        weight = self.readSignedInt()
+        npoints = self.readSignedInt()
 
         for i in range(npoints):
-            timepos = self.readInt()
-            vertpos = self.readInt()
+            timepos = self.readSignedInt()
+            vertpos = self.readSignedInt()
             vibrato = self.readByte()
 
     def readGrace(self):
