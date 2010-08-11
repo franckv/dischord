@@ -1,3 +1,5 @@
+import struct
+
 class FileReader:
     def __init__(self, path):
         self.path = path
@@ -30,13 +32,12 @@ class FileReader:
 
     def readByte(self):
         s = self.file.read(1)
-        return ord(s[0])
+        return struct.unpack('B', s)[0]
+        #return ord(s[0])
 
     def readSignedByte(self):
-        b = self.readByte()
-        if b > 127:
-            b -= 256
-        return b
+        s = self.file.read(1)
+        return struct.unpack('b', s)[0]
 
     def readChar(self):
         s = self.file.read(1)
@@ -46,33 +47,41 @@ class FileReader:
         s = self.file.read(1)
         return (ord(s) == 1)
 
-    def readShortBE(self):
-        s = self.file.read(2)
-        return (ord(s[0]) << 8) + ord(s[1])
-
-    def readShortLE(self):
-        s = self.file.read(2)
-        return (ord(s[1]) << 8) + ord(s[0])
-
     def readShort(self):
         if self.endianess == 0:
-            return self.readShortLE()
+            format = '<H'
         else:
-            return self.readShortBE()
-
-    def readIntBE(self):
-        s = self.file.read(4)
-        return (ord(s[0]) << 24) + (ord(s[1]) << 16) + (ord(s[2]) << 8) + ord(s[3])
-
-    def readIntLE(self):
-        s = self.file.read(4)
-        return (ord(s[3]) << 24) + (ord(s[2]) << 16) + (ord(s[1]) << 8) + ord(s[0])
+            format = '>H'
+        s = self.file.read(2)
+        return struct.unpack(format, s)[0]
 
     def readInt(self):
         if self.endianess == 0:
-            return self.readIntLE()
+            format = '<I'
         else:
-            return self.readIntBE()
+            format = '>I'
+        s = self.file.read(4)
+        i = struct.unpack(format, s)[0]
+        if i > 1000:
+            print i
+            raise Exception('Integer Overflow')
+        return i
+
+    def readSignedInt(self):
+        if self.endianess == 0:
+            format = '<i'
+        else:
+            format = '>i'
+        s = self.file.read(4)
+        i = struct.unpack(format, s)[0]
+        if abs(i) > 1000:
+            print i
+            raise Exception('Integer Overflow')
+        return i
+
+
+    def skip(self, c):
+        self.file.read(c)
 
     def readColor(self):
         colR = self.readByte()
