@@ -13,8 +13,10 @@ if __name__ == '__main__':
     usage = 'Usage: %prog COMMAND [ARGS]'
     parser = OptionParser(usage)
     parser.add_option('-m', '--mode', dest='mode', default='major', help='mode of the scale: major (default), harmonic_minor, ionian, ...')
-    parser.add_option('-r', '--range', dest='range', help='range of the frets to display')
+    parser.add_option('-r', '--range', dest='range', default='0,5', help='range of the frets to display')
     parser.add_option('-f', '--frets', dest='frets', type='int', default=12, help='number of frets on the neck')
+
+    parser.add_option('-t', '--track', dest='track', type='int', default=0, help='track to display')
 
     parser.add_option('--ui', dest='ui', default='console', help='interface: curses or console (default)')
    
