@@ -3,7 +3,7 @@ import os, os.path
 from mingus.core import scales, chords
 
 from guitar import Guitar
-from tabreader import GP3Reader
+from parsers.GP3Reader import GP3Reader
 
 def do_scale(options, scale):
     g = Guitar(frets=options.frets)
