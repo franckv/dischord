@@ -51,26 +51,38 @@ def do_tab(options, filename):
     reader.open()
     song = reader.parseSong()
     track = song.tracks[options.track]
-    scope = [int(n) for n in options.range.split(',')]
-    show_tab(track, scope)
+    scope = [min(int(n), len(song.measures)) for n in options.range.split(',')]
+
+    for subscope in split_scope(scope, 5):
+        show_tab(track, subscope)
     reader.close()
+
+def split_scope(scope, r):
+    inf = scope[0]
+    sup = scope[1]
+    result = []
+    
+    i = inf
+    while i<sup:
+        m = min(sup, i+r)
+        result.append((i, m))
+        i += r
+
+    return result
 
 def show_tab(track, measures=(0, 5)):
     strings = ['|' for i in range(track.nstrings)]
     for measure in track.measures[measures[0]:measures[1]]:
-        #for beat in measure.beats:
-        #    for note in beat.notes:
-        #        print '%i/%i [%i]' % (note.string, note.fret, note.type)
-        #    print
-
         for beat in measure.beats:
             for i in range(track.nstrings):
                 note = None
                 for n in beat.notes:
                     if n.string == i+1:
                         note = n
-                if note is None or note.type == 2:
+                if note is None or note.tied:
                     strings[i] += '--'
+                elif note.dead:
+                    strings[i] += 'x-'
                 else:
                     strings[i] += str(note.fret)
                     if note.fret < 10:
@@ -82,6 +94,7 @@ def show_tab(track, measures=(0, 5)):
 
     for string in strings:
         print string
+    print
 
 def get_scope(options, g):
     if options.range:

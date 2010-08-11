@@ -42,3 +42,5 @@ class Note(object):
     def __init__(self):
         self.string = 0
         self.fret = 0
+        self.tied = False
+        self.dead = False

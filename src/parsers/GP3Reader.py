@@ -204,6 +204,10 @@ class GP3Reader(GPReader):
         
         if flags & 32:
             note.type = self.readByte()
+            if note.type == 2:
+                note.tied = True
+            elif note.type == 3:
+                note.dead = True
 
         if flags & 1:
             note.duration = self.readByte()
