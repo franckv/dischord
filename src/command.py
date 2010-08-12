@@ -3,7 +3,7 @@ import os, os.path
 from mingus.core import scales, chords
 
 from guitar import Guitar
-from parsers.GP3Reader import GP3Reader
+from parsers import ReaderFactory
 
 def do_scale(options, scale):
     g = Guitar(frets=options.frets)
@@ -47,7 +47,7 @@ def do_chord(options, chord):
         print line
 
 def do_tab(options, filename):
-    reader = GP3Reader(filename)
+    reader = ReaderFactory.getReader(filename)
     reader.open()
     song = reader.parseSong()
     track = song.tracks[options.track]
@@ -88,7 +88,14 @@ def show_tab(track, measures=(0, 5)):
                     if note.fret < 10:
                         strings[i] += '-'
 
-                strings[i] += '-'
+                if note and note.hammer:
+                    strings[i] += 'h'
+                elif note and note.slide:
+                    strings[i] += '/'
+                elif note and note.bend > 0:
+                    strings[i] += '^'
+                else:
+                    strings[i] += '-'
         for i in range(track.nstrings):
             strings[i] += '|'
 
