@@ -1,7 +1,7 @@
 from model import Song, Channel, Measure, Track, MeasureTrack, Beat, Note
 from GPReader import GPReader
 
-class GP3Reader(GPReader):
+class GP4Reader(GPReader):
     def parseProperties(self, song):
         song.version = self.getPaddedString(30)
         song.title = self.getPaddedString()
@@ -19,8 +19,20 @@ class GP3Reader(GPReader):
             song.comment += self.getPaddedString()
 
         song.tripletfeel = self.readBool()
+
+        song.lyricTrack = self.readInt()
+        self.parseLyrics()
+
         song.tempo = self.readSignedInt()
         song.key = self.readSignedInt()
+        song.octave = self.readByte()
+
+    def parseLyrics(self):
+        for i in range(5):
+            self.skip(4)
+            l = self.readInt()
+            if l > 0:
+                s = self.readString(l)
 
     def parseChannels(self, song):
         for port in range(4):
@@ -150,28 +162,31 @@ class GP3Reader(GPReader):
 
     def parseBeatEffect(self, beat):
         flags = self.readByte()
+        flags2 = self.readByte()
 
-        if flags & 1:
-            beat.vibrato = True
         if flags & 2:
             beat.vibrato = True
+
         if flags & 16:
             beat.fadeIn = True
+
         if flags & 32:
             type = self.readByte()
-            if type == 0:
-                beat.tremolo = self.readInt()
-            elif type == 1:
+            if type == 1:
                 beat.tapping = True
-                self.skip(4)
             elif type == 2:
                 beat.slapping = True
-                self.skip(4)
             elif type == 3:
                 beat.popping = True
-                self.skip(4)
+
+        if flags2 & 4:
+            beat.tremolo = self.parseBend()
+
         if flags & 64:
             raise Exception('Not implemented')
+
+        if flags2 & 2:
+            self.readByte()
 
     def parseMixChange(self):
         instrument = self.readSignedByte()
@@ -197,11 +212,18 @@ class GP3Reader(GPReader):
             tremoloduration = self.readByte()
         if tempo >= 0:
             tempoduration = self.readByte()
+        self.readByte()
 
     def parseNote(self):
         note = Note()
         flags = self.readByte()
         
+        if flags & 64:
+            note.accentuated = True
+
+        if flags & 4:
+            note.ghost = True
+
         if flags & 32:
             note.type = self.readByte()
             if note.type == 2:
@@ -232,15 +254,40 @@ class GP3Reader(GPReader):
 
     def parseNoteEffect(self, note):
         flags = self.readByte()
+        flags2 = self.readByte()
+
+        if flags & 2:
+            note.hammer = True
+
+        if flags2 & 64:
+            note.vibrato = True
+
+        if flags2 & 2:
+            note.palmMute = True
+
+        if flags2 & 1:
+            note.staccato = True
 
         if flags & 1:
             note.bend = self.parseBend()
-        if flags & 4:
-            note.slide = True
-        if flags & 2:
-            note.hammer = True
+
         if flags & 16:
             note.grace = self.parseGrace()
+
+        if flags2 & 4:
+            note.tremoloPicking = self.readByte()
+
+        if flags2 & 8:
+            note.slide = True
+            self.readByte()
+
+        if flags2 & 16:
+            note.harmonics = self.readByte()
+
+        if flags2 & 32:
+            note.trill = True
+            fret = self.readByte()
+            period = self.readByte()
 
     def parseBend(self):
         type = self.readByte()
@@ -261,7 +308,7 @@ class GP3Reader(GPReader):
         duration = self.readByte()
 
 if __name__ == '__main__':
-    reader = GP3Reader('tests/test.gp3')
+    reader = GP4Reader('tests/test.gp4')
 
     reader.open()
 

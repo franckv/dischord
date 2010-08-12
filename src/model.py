@@ -37,6 +37,11 @@ class Beat(object):
         self.dotted = False
         self.nuplet = None
         self.notes = []
+        self.vibrato = False
+        self.tapping = False
+        self.slapping = False
+        self.popping = False
+        self.fadeIn = False
 
 class Note(object):
     def __init__(self):
@@ -44,3 +49,6 @@ class Note(object):
         self.fret = 0
         self.tied = False
         self.dead = False
+        self.hammer = False
+        self.slide = False
+        self.bend = 0
