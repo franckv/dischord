@@ -2,8 +2,8 @@ import os, os.path
 
 from mingus.core import scales, chords
 
-from guitar import Guitar
-from parsers import ReaderFactory
+from .guitar import Guitar
+from .parsers import ReaderFactory
 
 def do_scale(options, scale):
     g = Guitar(frets=options.frets)
@@ -36,7 +36,7 @@ def do_scale(options, scale):
 
     lines = g.get_notes(notes, scope)
     for line in lines:
-        print line
+        print(line)
 
 def do_chord(options, chord):
     g = Guitar(frets=options.frets)
@@ -44,7 +44,7 @@ def do_chord(options, chord):
 
     lines = g.get_chord(chord, scope)
     for line in lines:
-        print line
+        print(line)
 
 def do_tab(options, filename):
     reader = ReaderFactory.getReader(filename)
@@ -100,8 +100,8 @@ def show_tab(track, measures=(0, 5)):
             strings[i] += '|'
 
     for string in strings:
-        print string
-    print
+        print(string)
+    print()
 
 def get_scope(options, g):
     if options.range:
@@ -109,11 +109,11 @@ def get_scope(options, g):
             (min,max) = [int(n) for n in options.range.split(',')]
             if min < 0: min = 0
             if max > g.frets: max = g.frets
-            scope = range(min, max + 1)
+            scope = list(range(min, max + 1))
         except:
-            scope = range(0, g.frets + 1)
+            scope = list(range(0, g.frets + 1))
     else:
-        scope = range(0, g.frets + 1)
+        scope = list(range(0, g.frets + 1))
 
     return scope
 

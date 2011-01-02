@@ -2,9 +2,9 @@ import os, sys
 from optparse import OptionParser
 import logging
 
-import log
-import command
-import ui.ncurses
+from . import log
+from . import command
+from .ui import ncurses
 
 if __name__ == '__main__':
     log.init(logging.WARN, '/tmp/dischord.log')

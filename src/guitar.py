@@ -1,7 +1,7 @@
 from mingus.core import scales, chords
 from mingus.containers import Note
 
-from tuning import Tuning, Standard
+from .tuning import Tuning, Standard
 
 class Guitar:
     def __init__(self, tuning = None, frets = 12):
@@ -16,7 +16,7 @@ class Guitar:
         lines = []
 
         if scope is None:
-            scope = range(0, self.frets + 1)
+            scope = list(range(0, self.frets + 1))
 
         lines.append(self.get_ruler(scope))
         first = True

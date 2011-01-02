@@ -1,5 +1,5 @@
 from model import Song
-from FileReader import FileReader
+from .FileReader import FileReader
 
 class GPReader(FileReader):
     def parseSong(self):
