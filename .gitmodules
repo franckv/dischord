@@ -1,3 +1,0 @@
-[submodule "src/ui/ncurses/widget"]
-	path = src/ui/ncurses/widget
-	url = git@github.com:franckv/pycurses-widgets.git
