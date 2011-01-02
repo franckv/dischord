@@ -1,5 +1,5 @@
-from GP3Reader import GP3Reader
-from GP4Reader import GP4Reader
+from .GP3Reader import GP3Reader
+from .GP4Reader import GP4Reader
 
 def getReader(filename):
     if filename.endswith('.gp3'):

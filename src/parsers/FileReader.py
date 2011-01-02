@@ -63,7 +63,7 @@ class FileReader:
         s = self.file.read(4)
         i = struct.unpack(format, s)[0]
         if i > 1000:
-            print i
+            print(i)
             raise Exception('Integer Overflow')
         return i
 
@@ -75,7 +75,7 @@ class FileReader:
         s = self.file.read(4)
         i = struct.unpack(format, s)[0]
         if abs(i) > 1000:
-            print i
+            print(i)
             raise Exception('Integer Overflow')
         return i
 

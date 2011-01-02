@@ -1,6 +1,6 @@
 import logging
 
-import common
+from . import common
 
 def init(level, filename):
     logging.basicConfig(

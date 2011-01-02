@@ -1,5 +1,5 @@
 from model import Song, Channel, Measure, Track, MeasureTrack, Beat, Note
-from GPReader import GPReader
+from .GPReader import GPReader
 
 class GP3Reader(GPReader):
     def parseProperties(self, song):
@@ -139,7 +139,7 @@ class GP3Reader(GPReader):
             self.parseMixChange()
         
         stringmap = self.readByte()
-        for string in reversed(range(7)):
+        for string in reversed(list(range(7))):
             if stringmap & (1 << string):
                 note = self.parseNote()
                 note.string = 7 - string
