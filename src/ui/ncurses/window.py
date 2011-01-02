@@ -1,7 +1,7 @@
 import common
 import log
+from pycurses_widgets import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel
 from ui.ncurses.commandhandler import CommandHandler
-from ui.ncurses.widget import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel
 
 class Window(Screen):
     def __init__(self, win):

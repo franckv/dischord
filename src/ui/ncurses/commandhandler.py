@@ -4,8 +4,6 @@ import curses
 
 from guitar import Guitar
 
-from ui.ncurses.widget import TextPanel
-
 class CommandHandler(object):
     def __init__(self, screen):
         self.screen = screen
