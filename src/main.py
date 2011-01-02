@@ -2,9 +2,9 @@ import os, sys
 from optparse import OptionParser
 import logging
 
-from . import log
-from . import command
-from .ui import ncurses
+import log
+import command
+import ui.ncurses
 
 if __name__ == '__main__':
     log.init(logging.WARN, '/tmp/dischord.log')
@@ -30,15 +30,15 @@ if __name__ == '__main__':
 
         cmd = args[0]
 
-        if not cmd in command.list:
+        if not cmd in command.cmd:
             parser.error('invalid command')
         else:
-            nargs = int(command.list[cmd]['args'])
+            nargs = int(command.cmd[cmd]['args'])
            
             if nargs != len(args) - 1:
                 parser.error('wrong number of arguments (expected %i)' % nargs)
             else:
-                command.list[cmd]['exec'](options, *args[1:])
+                command.cmd[cmd]['exec'](options, *args[1:])
 
     log.debug('Stop')
 

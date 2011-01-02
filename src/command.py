@@ -2,8 +2,8 @@ import os, os.path
 
 from mingus.core import scales, chords
 
-from .guitar import Guitar
-from .parsers import ReaderFactory
+from guitar import Guitar
+from parsers import ReaderFactory
 
 def do_scale(options, scale):
     g = Guitar(frets=options.frets)
@@ -117,7 +117,7 @@ def get_scope(options, g):
 
     return scope
 
-list = {
+cmd = {
         'scale': {'args': 1, 'exec': do_scale},
         'chord': {'args': 1, 'exec': do_chord},
         'tab': {'args': 1, 'exec': do_tab},
