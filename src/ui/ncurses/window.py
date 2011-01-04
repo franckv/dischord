@@ -1,5 +1,6 @@
+import logging
+
 import common
-import log
 from pycurses_widgets import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel
 from ui.ncurses.commandhandler import CommandHandler
 
@@ -25,7 +26,7 @@ class Window(Screen):
         self.redraw()
 
     def send_event(self, event):
-        log.debug('received event %s' % event)
+        logging.debug('received event %s' % event)
         if not event in self.events:
             self.main.send_event(event)
         else:

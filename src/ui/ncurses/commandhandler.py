@@ -1,4 +1,4 @@
-import log
+import logging
 import re
 import curses
 
@@ -13,7 +13,7 @@ class CommandHandler(object):
         curses.curs_set(0)
         while True:
             c = self.screen.get_char()
-            log.debug(c)
+            logging.debug(c)
 
             if c is None:
                 continue
@@ -35,7 +35,7 @@ class CommandHandler(object):
                 self.screen.set_status('(%i, %i) : <%s>' % (y, x, search.strip()))
                 self.run_search(search)
             else:
-                log.debug('unknown command %s' % c)
+                logging.debug('unknown command %s' % c)
 
     def run_command(self, cmd):
         if cmd == 'q' or cmd == 'quit':
