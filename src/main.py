@@ -2,13 +2,19 @@ import os, sys
 from optparse import OptionParser
 import logging
 
-import log
 import command
 import ui.ncurses
 
 if __name__ == '__main__':
-    log.init(logging.WARN, '/tmp/dischord.log')
-    log.debug('Start')
+    logging.basicConfig(
+        level = logging.WARN,
+        format="[%(levelname)-8s] %(asctime)s %(module)s:%(lineno)d %(message)s",
+        datefmt="%H:%M:%S",
+        filename = '/tmp/dischord.log',
+        filemode = 'w'
+    )
+
+    logging.debug('Start')
    
     usage = 'Usage: %prog COMMAND [ARGS]'
     parser = OptionParser(usage)
@@ -40,5 +46,5 @@ if __name__ == '__main__':
             else:
                 command.cmd[cmd]['exec'](options, *args[1:])
 
-    log.debug('Stop')
+    logging.debug('Stop')
 
