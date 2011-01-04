@@ -28,7 +28,7 @@ class FileReader:
         if size == 0: size = self.readByte()
         s = self.file.read(size)
 
-        return s
+        return s.decode('ascii')
 
     def readByte(self):
         s = self.file.read(1)
