@@ -57,6 +57,9 @@ def do_tab(options, filename):
         show_tab(track, subscope)
     reader.close()
 
+def do_diagram(options, notes):
+    pass
+
 def split_scope(scope, r):
     inf = scope[0]
     sup = scope[1]
@@ -118,8 +121,9 @@ def get_scope(options, g):
     return scope
 
 cmd = {
-        'scale': {'args': 1, 'exec': do_scale},
-        'chord': {'args': 1, 'exec': do_chord},
-        'tab': {'args': 1, 'exec': do_tab},
-        }
+    'scale': {'args': 1, 'exec': do_scale},
+    'chord': {'args': 1, 'exec': do_chord},
+    'tab': {'args': 1, 'exec': do_tab},
+    'diagram': {'args': 1, 'exec': do_diagram},
+}
 
