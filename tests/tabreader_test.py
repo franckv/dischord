@@ -1,6 +1,6 @@
 import unittest
 
-from tabreader import GP3Reader
+from parsers.GP3Reader import GP3Reader
 
 class TestGP3Reader(unittest.TestCase):
     def setUp(self):
