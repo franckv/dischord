@@ -31,9 +31,14 @@ class MeasureTrack(object):
         self.track = track
         self.beats = []
 
+
+# note durations (W=Whole, ...)
+(W, H, Q, E, S, T, X) = [64, 32, 16, 8, 4, 2, 1]
+
 class Beat(object):
     def __init__(self):
         self.text = None
+        self.duration = 0
         self.dotted = False
         self.nuplet = None
         self.notes = []
