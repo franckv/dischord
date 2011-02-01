@@ -27,7 +27,7 @@ class Window(Screen):
 
     def send_event(self, event):
         logging.debug('received event %s' % event)
-        if not super(Window, self).send_event(event):
+        return super(Window, self).send_event(event) or \
             self.main.send_event(event)
 
     def set_status(self, text):
@@ -39,11 +39,11 @@ class Window(Screen):
     def get_char(self):
         return self.command.get_char()
 
-    def show_next_tab(self):
+    def show_next_tab(self, event=None):
         self.main.show_next_tab()
         self.update_title()
 
-    def show_prev_tab(self):
+    def show_prev_tab(self, event=None):
         self.main.show_prev_tab()
         self.update_title()
 
