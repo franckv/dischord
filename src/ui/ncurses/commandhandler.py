@@ -22,20 +22,17 @@ class CommandHandler(object):
             (y, x) = self.screen.get_pos()
             self.screen.set_status('(%i, %i) : <%s>' % (y, x, c.strip()))
 
-            events = ['<KEY_LEFT>', '<KEY_RIGHT>', '<KEY_DOWN>', '<KEY_UP>', '<KEY_RESIZE>', '<KEY_ENTER>', '<KEY_BACKSPACE>', '<KEY_TAB>', '<KEY_BTAB>']
-
-            if c in events:
-                self.screen.send_event(c)
-            elif c == ':':
-                cmd = self.screen.read_command()
-                self.screen.set_status('(%i, %i) : <%s>' % (y, x, cmd.strip()))
-                self.run_command(cmd)
-            elif c == '/':
-                search = self.screen.read_search()
-                self.screen.set_status('(%i, %i) : <%s>' % (y, x, search.strip()))
-                self.run_search(search)
-            else:
-                logging.debug('unknown command %s' % c)
+            if not self.screen.send_event(c)
+                if c == ':':
+                    cmd = self.screen.read_command()
+                    self.screen.set_status('(%i, %i) : <%s>' % (y, x, cmd.strip()))
+                    self.run_command(cmd)
+                elif c == '/':
+                    search = self.screen.read_search()
+                    self.screen.set_status('(%i, %i) : <%s>' % (y, x, search.strip()))
+                    self.run_search(search)
+                else:
+                    logging.debug('unknown command %s' % c)
 
     def run_command(self, cmd):
         if cmd == 'q' or cmd == 'quit':
