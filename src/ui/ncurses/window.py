@@ -1,4 +1,5 @@
 import logging
+import curses
 
 import common
 from pycurses_widgets import Screen, StatusBar, CommandBar, TitleBar, TextPanel, TabPanel
@@ -7,8 +8,6 @@ from ui.ncurses.commandhandler import CommandHandler
 class Window(Screen):
     def __init__(self, win):
         super(Window, self).__init__(win)
-
-        self.handler = CommandHandler(self)
 
         self.title = TitleBar(self)
 
@@ -20,15 +19,21 @@ class Window(Screen):
         self.status = StatusBar(self)
         self.command = CommandBar(self)
 
-        self.register_event('<KEY_TAB>', self.show_next_tab)
-        self.register_event('<KEY_BTAB>', self.show_prev_tab)
+        self.main.register_event('<KEY_TAB>', self.show_next_tab)
+        self.main.register_event('<KEY_BTAB>', self.show_prev_tab)
+
+        self.handler = CommandHandler(self)
+
+        self.command.register_event(':', self.handler.run_command)
+        self.command.register_event('/', self.handler.run_search)
 
         self.redraw()
 
     def send_event(self, event):
         logging.debug('received event %s' % event)
         return super(Window, self).send_event(event) or \
-            self.main.send_event(event)
+            self.main.send_event(event) or \
+            self.command.send_event(event)
 
     def set_status(self, text):
         self.status.set_text(text)
@@ -59,11 +64,8 @@ class Window(Screen):
 
         self.set_title('%s v%s %s' % (common.PROGNAME, common.PROGVERSION, title))
 
-    def read_command(self):
-        return self.command.read(':', self.validate_command_input)
-
-    def read_search(self):
-        return self.command.read('/', self.validate_command_input)
+    def read(self, c):
+        return self.command.read(c, self.validate_command_input)
 
     def validate_command_input(self, c):
         (y, x) = self.command.get_pos()
@@ -72,5 +74,6 @@ class Window(Screen):
         return True
 
     def run(self):
-        self.handler.handle()
+        curses.curs_set(0)
+        self.handle_events()
 
