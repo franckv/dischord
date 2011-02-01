@@ -27,10 +27,8 @@ class Window(Screen):
 
     def send_event(self, event):
         logging.debug('received event %s' % event)
-        if not event in self.events:
+        if not super(Window, self).send_event(event):
             self.main.send_event(event)
-        else:
-            self.events[event]()
 
     def set_status(self, text):
         self.status.set_text(text)
