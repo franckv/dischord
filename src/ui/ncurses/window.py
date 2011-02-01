@@ -19,13 +19,14 @@ class Window(Screen):
         self.status = StatusBar(self)
         self.command = CommandBar(self)
 
+        self.main.register_event('<KEY_RESIZE>', self.screen.redraw)
         self.main.register_event('<KEY_TAB>', self.show_next_tab)
         self.main.register_event('<KEY_BTAB>', self.show_prev_tab)
 
         self.handler = CommandHandler(self)
 
-        self.command.register_event(':', self.handler.run_command)
-        self.command.register_event('/', self.handler.run_search)
+        self.main.register_event(':', self.handler.run_command)
+        self.main.register_event('/', self.handler.run_search)
 
         self.redraw()
 
@@ -40,9 +41,6 @@ class Window(Screen):
 
     def set_title(self, text):
         self.title.set_text(text)
-
-    def get_char(self):
-        return self.command.get_char()
 
     def show_next_tab(self, event=None):
         self.main.show_next_tab()
@@ -75,5 +73,5 @@ class Window(Screen):
 
     def run(self):
         curses.curs_set(0)
-        self.handle_events()
+        self.main.handle_events()
 
